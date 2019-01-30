@@ -1,0 +1,44 @@
+{
+  "name": "react-logistics",
+  "version": "0.0.8",
+  "description": "",
+  "main": "dist/index.js",
+  "typings": "index.d.ts",
+  "scripts": {
+    "build": "rollup -c",
+    "test": "jest"
+  },
+  "author": "AtaruOhto",
+  "license": "MIT",
+  "dependencies": {
+    "enzyme": "^3.8.0",
+    "enzyme-adapter-react-16": "^1.7.1",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.1.0",
+    "@types/enzyme": "^3.1.15",
+    "@types/enzyme-adapter-react-16": "^1.0.3",
+    "@types/jest": "23.3.13",
+    "@types/react": "^16.7.21",
+    "@types/react-dom": "^16.0.11",
+    "babel-jest": "^23.6.0",
+    "babel-preset-env": "^1.7.0",
+    "babel-preset-react": "^6.24.1",
+    "jest": "^23.6.0",
+    "jest-pnp-resolver": "1.0.1",
+    "jest-resolve": "23.6.0",
+    "react-app-polyfill": "^0.2.0",
+    "react-test-renderer": "^16.7.0",
+    "rollup": "^1.1.2",
+    "rollup-plugin-istanbul": "^2.0.1",
+    "rollup-plugin-typescript2": "^0.19.2",
+    "rollup-plugin-uglify": "^6.0.2",
+    "ts-jest": "^23.10.5",
+    "ts-loader": "^5.3.3",
+    "tsc": "^1.20150623.0",
+    "tslib": "^1.9.3",
+    "typescript": "^3.2.4"
+  }
+}
