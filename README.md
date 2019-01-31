@@ -1,7 +1,6 @@
 # React Logistics
 
-
-Simple and Minimal state management library for React. Built upon React Context API internallly.
+Simple and Minimal state management library for React. Built upon React Context API.
 
 ## Getting Started
 
