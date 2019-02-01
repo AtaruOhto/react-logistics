@@ -1,5 +1,7 @@
 # React Logistics
 
+[![Build Status](https://travis-ci.com/AtaruOhto/react-logistics.svg?branch=master)](https://travis-ci.com/AtaruOhto/react-logistics)
+
 Simple and Minimal state management library for React. Easy to debug. Built upon React Context API.
 
 ## Getting Started
@@ -9,6 +11,7 @@ Simple and Minimal state management library for React. Easy to debug. Built upon
 ```shell
 yarn add react-logistics
 ```
+
 
 ### Create Stores
 
@@ -39,6 +42,8 @@ const counterStore = buildStore<CounterState>(
 );
 ```
 
+### Define Functions to mutate store
+
 store.setState() method will mutate store values and you can call setState() dilecty like "counterStore.setState({})". However here we define actions to set values to store. It's completely arbitrary to do so. 
 
 
@@ -52,6 +57,8 @@ export const decrement = (count: number) => {
   counterStore.setState({ count: count -= 1 });
 };
 ```
+
+### Enhance a component with withConsumer()
 
 In order to subscribe the store values with React Context API, you need to enhance a component with Context.Consumer with the form of HoC. In React Logistics, store.withConsumer() method undertakes the role. We define a component which will be enhanced with store.withConsumer(). A component enhanced with withConsumer<T>() automatically subscribe store's value changes and re-render itself whenever connected store changed.
 
@@ -83,8 +90,7 @@ const EnhancedCounter = counterStore.withConsumer<CounterState>(
 
 ```
 
-
-### store.Provider
+### Locate store.Provider as an ancestor
 
 In order to make a component wrapped with withConsumer() subscribe values, Provider is needed to be located as an ancestor component as the code below. Thus enhanced components are able to subscribe value changes.
 
@@ -101,9 +107,9 @@ const App = () => (
 ```
 
 
-## TypeScript Counter Example (one file version)
+## TypeScript Counter Example (one file full version)
 
-```
+```jsx
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { buildStore, ReactLogisticsOption } from 'react-logistics';
@@ -175,8 +181,6 @@ ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
 
 
 
-
-
 ## API
 
 
@@ -197,8 +201,7 @@ export const Todo = buildStore<TodoState>(initialState, 'MyTodoStore', option);
 ```
 
 
-
-buildStore() method create a store. You can specify type of State via TypeScript generics *<T>*  and develop with type safe. React Logistics is not boud to the discipling of the "single source of the truth", and you can create store as many as you want.
+buildStore() method create a store. You can specify type of State via TypeScript generics <T>. React Logistics is not bound to the discipling of the "Single source of truth", and you can create store as many as you want.
 
 #### Available Option
 
@@ -274,9 +277,7 @@ created Store has these methods and properties.
 
 
 
-## Debugging from console
-
-
+## Debugging and populating on Console
 
 By exposeGlobal options to "true", store object becomes global and accessible from console.  You can populate store and debug without any difficult settings or procedure.
 
