@@ -13,7 +13,7 @@ yarn add react-logistics
 ### Create Stores
 
 import *react-logistics* and create stores with *buildStore()* function.
-react-logistics supports type-safe development experience via TypeScript generics.
+If you use TypeScript, react-logistics supports type-safe development experience via TypeScript generics and prevent from putting invalid values into the store.
 
 ```jsx
 import { buildStore, ReactLogisticsOption } from 'react-logistics';
@@ -27,11 +27,11 @@ const initialState: CounterState = {
 };
 
 const option: ReactLogisticsOption = {
-  exposeGlobal: true /* expose store to global object. you can call store.setState() and getState() directly from console. */,
-  saveHistory: true /* saving payload history, enables time machine. */,
+  exposeGlobal: true /* expose store to global object. By setting this option, you can call store.setState() and getState() directly from console. */,
+  saveHistory: true /* saving payload history, enables time machine with store.prev() and next() method. */,
 };
 
-/* Define Store*/
+/* Define Store */
 const counterStore = buildStore<CounterState>(
   initialState,
   'MyCounterStore',
@@ -39,11 +39,7 @@ const counterStore = buildStore<CounterState>(
 );
 ```
 
-
-
-Define Actions. It's completely arbitrary to define actions and you can call store.setState() directly
-
-
+store.setState() method will mutate store values and you can call setState() dilecty like "counterStore.setState({})". However here we define actions to set values to store. It's completely arbitrary to do so. 
 
 
 ```jsx
@@ -57,11 +53,7 @@ export const decrement = (count: number) => {
 };
 ```
 
-
-
-Define a component which will be enhanced by withConsmer() function and increment and decrement action. Defining action is completely arbitrary and you can call *store.setState()* dilectly.
-
-
+In order to subscribe the store values with React Context API, you need to enhance a component with Context.Consumer with the form of HoC. In React Logistics, store.withConsumer() method undertakes the role. We define a component which will be enhanced with store.withConsumer(). A component enhanced with withConsumer<T>() automatically subscribe store's value changes and re-render itself whenever connected store changed.
 
 ```jsx
 const CounterComponent = ({ count }: CounterState) => (
@@ -92,9 +84,9 @@ const EnhancedCounter = counterStore.withConsumer<CounterState>(
 ```
 
 
+### store.Provider
 
-And define these component in React.
-
+In order to make a component wrapped with withConsumer() subscribe values, Provider is needed to be located as an ancestor component as the code below. Thus enhanced components are able to subscribe value changes.
 
 
 ```jsx
@@ -106,9 +98,7 @@ const App = () => (
     </div>
   </counterStore.Provider>
 );
-
 ```
-
 
 
 ## TypeScript Counter Example (one file version)
