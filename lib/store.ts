@@ -2,14 +2,17 @@ import { Option } from './';
 
 export class Store<T> {
   private state: T;
-  private key: string;
   private option: Option;
   private callbacks: Array<(val: T) => void> = [];
+  private payloadHistory: Partial<T>[] = [];
+  private timeMachineCursor: number = 0;
+  private debugPayload: boolean = false;
+  private debugState: boolean = false;
 
-  constructor(state: T, key: string, option: Option = {}) {
+  constructor(state: T, option: Option = {}) {
     this.state = state;
-    this.key = key;
     this.option = option;
+    this.pushHistory(state);
   }
 
   public subscribe = (callback: (val: T) => void) => {
@@ -22,36 +25,72 @@ export class Store<T> {
 
   public getState = () => this.state;
 
-  public setState = (newStatePartial: Partial<T>) => {
-    this.logByCondition(
-      this.option.debug && this.option.debug.beforeUpdate,
-      this.state,
-    );
+  public next = () => {
+    if (this.timeMachineCursor === this.payloadHistory.length - 1) {
+      return;
+    }
 
-    this.state = { ...this.state, ...newStatePartial };
+    const newCursor = this.timeMachineCursor + 1;
+    const nextPayload: Partial<T> = this.payloadHistory[newCursor];
+    this.timeMachineCursor = newCursor;
+    this.jumpHistory(nextPayload);
+  };
+
+  public prev = () => {
+    if (this.timeMachineCursor === 0) {
+      return;
+    }
+    const newCursor = this.timeMachineCursor - 1;
+    const prevPayload: Partial<T> = this.payloadHistory[newCursor];
+    this.timeMachineCursor = newCursor;
+    this.jumpHistory(prevPayload);
+  };
+
+  public setState = (payload: Partial<T>, log = '') => {
+    this.state = { ...this.state, ...payload };
     this.notify(this.state);
+    this.pushHistory(payload);
+    this.logByCondition(!!log, log);
+    this.logByCondition(this.debugPayload, payload);
+    this.logByCondition(this.debugState, this.state);
+  };
 
-    this.logByCondition(
-      this.option.debug && this.option.debug.payload,
-      newStatePartial,
-    );
+  public enableDebugPayload = () => {
+    this.debugPayload = true;
+  };
 
-    this.logByCondition(
-      this.option.debug && this.option.debug.afterUpdate,
-      this.state,
-    );
+  public enableDebugState = () => {
+    this.debugState = true;
+  };
+
+  public disableDebugPayload = () => {
+    this.debugPayload = false;
+  };
+
+  public disableDebugState = () => {
+    this.debugState = false;
   };
 
   /* Private */
 
-  private logByCondition = (
-    condition: boolean | undefined,
-    data: T | Partial<T>,
-  ) => {
+  private logByCondition = (condition: boolean | undefined, data: any) => {
     if (condition) {
-      console.log(`store ${this.key} was updated`);
-      console.log(data);
+      console.table ? console.table(data) : console.dir(data);
     }
+  };
+
+  private pushHistory = (payload: Partial<T>) => {
+    if (this.option.saveHistory) {
+      this.payloadHistory.push(payload);
+
+      // reset payloadHistory to the latest.
+      this.timeMachineCursor = this.payloadHistory.length - 1;
+    }
+  };
+
+  private jumpHistory = (payload: Partial<T>) => {
+    this.state = { ...this.state, ...payload };
+    this.notify(this.state);
   };
 
   private notify = (val: T) => {

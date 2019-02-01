@@ -1,7 +1,7 @@
 {
   "name": "react-logistics",
-  "version": "0.0.8",
-  "description": "",
+  "version": "0.0.18",
+  "description": "Simple and Minimal state management library for React. Easy to debug. Built upon React Context API.",
   "main": "dist/index.js",
   "typings": "index.d.ts",
   "scripts": {
@@ -36,7 +36,6 @@
     "rollup-plugin-typescript2": "^0.19.2",
     "rollup-plugin-uglify": "^6.0.2",
     "ts-jest": "^23.10.5",
-    "ts-loader": "^5.3.3",
     "tsc": "^1.20150623.0",
     "tslib": "^1.9.3",
     "typescript": "^3.2.4"
