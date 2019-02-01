@@ -16,30 +16,45 @@ import *react-logistics* and create stores with *buildStore()* function.
 react-logistics supports type-safe development experience via TypeScript generics.
 
 ```jsx
-/* TypeScript */
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import * as Logistics from "react-logistics";
+import { buildStore, ReactLogisticsOption } from 'react-logistics';
 
-interface CounterState {
-  counter: number;
+export interface CounterState {
+  count: number;
 }
 
-const initialState: CounterState = { counter: 0 };
-const StoreName = "MyCounterStore";
-const option = {
-  debug: {
-    afterUpdate: true,
-    global: true
-  }
+const initialState: CounterState = {
+  count: 0,
 };
 
-/* Define Store */
-const counterStore = Logistics.buildStore<CounterState>(
+const option: ReactLogisticsOption = {
+  exposeGlobal: true /* expose store to global object. you can call store.setState() and getState() directly from console. */,
+  saveHistory: true /* saving payload history, enables time machine. */,
+};
+
+/* Define Store*/
+const counterStore = buildStore<CounterState>(
   initialState,
-  StoreName,
-  option
+  'MyCounterStore',
+  option,
 );
+```
+
+
+
+Define Actions. It's completely arbitrary to define actions and you can call store.setState() directly
+
+
+
+
+```jsx
+/* Define Actions. It's completely arbitrary to define actions and you can call store.setState() directly */
+export const increment = (count: number) => {
+  counterStore.setState({ count: count += 1 });
+};
+
+export const decrement = (count: number) => {
+  counterStore.setState({ count: count -= 1 });
+};
 ```
 
 
@@ -48,111 +63,20 @@ Define a component which will be enhanced by withConsmer() function and incremen
 
 
 
-
 ```jsx
-/* Define Actions */
-const increment = (counter: number) => {
-  counterStore.setState({ counter: counter += 1 });
-};
-
-const decrement = (counter: number) => {
-  counterStore.setState({ counter: counter -= 1 });
-};
-
-/* By enhancing withConsumer() below, the component can access store value. */
-const Counter = ({ counter }: CounterState) => (
+const CounterComponent = ({ count }: CounterState) => (
   <div>
-    <h1>{counter}</h1>
+    <h1>{count}</h1>
     <button
       onClick={() => {
-        increment(counter);
+        increment(count);
       }}
     >
       increment
     </button>
     <button
       onClick={() => {
-        decrement(counter);
-      }}
-    >
-      decrement
-    </button>
-  </div>
-);
-
-/* Enhance a component with store.withConsumer() function. */
-const ConnectedCounter = counterStore.withConsumer<CounterState>(Counter);
-```
-
-
-
-```jsx
-/* In order to subscribe store value, define Provider as the parent of the component which is enhanced by withConsumer(). */
-const App = () => (
-  <counterStore.Provider>
-    <div>
-      <ConnectedCounter />
-    </div>
-  </counterStore.Provider>
-);
-
-```
-
-
-
-
-
-
-
-## TypeScript Example (Full Long Example)
-
-```jsx
-import * as React from "react";
-import * as ReactDOM from "react-dom";
-import * as Logistics from "react-logistics";
-
-interface CounterState {
-  counter: number;
-}
-
-const initialState: CounterState = { counter: 0 };
-const StoreName = "MyCounterStore";
-const option = {
-  debug: {
-    afterUpdate: true,
-    global: true
-  }
-};
-
-/* Define Store */
-const counterStore = Logistics.buildStore<CounterState>(
-  initialState,
-  StoreName,
-  option
-);
-
-/* Define Actions */
-const increment = (counter: number) => {
-  counterStore.setState({ counter: counter += 1 });
-};
-
-const decrement = (counter: number) => {
-  counterStore.setState({ counter: counter -= 1 });
-};
-
-const Counter = ({ counter }: CounterState) => (
-  <div>
-    <h1>{counter}</h1>
-    <button
-      onClick={() => {
-        increment(counter);
-      }}
-    >
-      increment
-    </button>
-    <button
-      onClick={() => {
-        decrement(counter);
+        decrement(count);
       }}
     >
       decrement
@@ -161,18 +85,105 @@ const Counter = ({ counter }: CounterState) => (
 );
 
 /* Enhance a component with store.withConsumer function. */
-const ConnectedCounter = counterStore.withConsumer<CounterState>(Counter);
+const EnhancedCounter = counterStore.withConsumer<CounterState>(
+  CounterComponent,
+);
 
+```
+
+
+
+And define these component in React.
+
+
+
+```jsx
+/* In order to subscribe store value, define Provider as the parent of the component which is enhanced by withConsumer(). */
 const App = () => (
   <counterStore.Provider>
     <div>
-      <ConnectedCounter />
+      <EnhancedCounter />
     </div>
   </counterStore.Provider>
 );
 
-ReactDOM.render(<App />, document.getElementById("root") as HTMLElement);
 ```
+
+
+
+## TypeScript Counter Example (one file version)
+
+```
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { buildStore, ReactLogisticsOption } from 'react-logistics';
+
+export interface CounterState {
+  count: number;
+}
+
+const initialState: CounterState = {
+  count: 0,
+};
+
+const option: ReactLogisticsOption = {
+  exposeGlobal: true /* expose store to global object. you can call store.setState() and getState() directly from console. */,
+  saveHistory: true /* saving payload history, enables time machine. */,
+};
+
+const counterStore = buildStore<CounterState>(
+  initialState,
+  'MyCounterStore',
+  option,
+);
+
+/* Define Actions. It's completely arbitrary to define actions and you can call store.setState() directly */
+export const increment = (count: number) => {
+  counterStore.setState({ count: count += 1 });
+};
+
+export const decrement = (count: number) => {
+  counterStore.setState({ count: count -= 1 });
+};
+
+const CounterComponent = ({ count }: CounterState) => (
+  <div>
+    <h1>{count}</h1>
+    <button
+      onClick={() => {
+        increment(count);
+      }}
+    >
+      increment
+    </button>
+    <button
+      onClick={() => {
+        decrement(count);
+      }}
+    >
+      decrement
+    </button>
+  </div>
+);
+
+/* Enhance a component with store.withConsumer function. */
+const EnhancedCounter = counterStore.withConsumer<CounterState>(
+  CounterComponent,
+);
+
+const App = () => (
+  <counterStore.Provider>
+    <div>
+      <EnhancedCounter />
+    </div>
+  </counterStore.Provider>
+);
+
+ReactDOM.render(<App />, document.getElementById('root') as HTMLElement);
+
+```
+
+
 
 
 
