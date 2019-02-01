@@ -8,7 +8,6 @@ export as namespace ReactLogistics;
 
 declare namespace ReactLogistics {
   type ReactLogisticsOption = {
-    debugPayload?: boolean;
     exposeGlobal?: boolean;
     saveHistory?: boolean;
   };

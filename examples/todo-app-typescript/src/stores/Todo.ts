@@ -20,7 +20,6 @@ const initialState: TodoState = {
 };
 
 const option: ReactLogisticsOption = {
-  debugPayload: true /* output payload whenever state changes. */,
   exposeGlobal: true /* expose store to global object. you can call store.setState() and getState() directly from console. */,
   saveHistory: true /* saving payload history, enables time machine. */,
 };

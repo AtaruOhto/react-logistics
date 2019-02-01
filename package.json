@@ -1,6 +1,6 @@
 {
   "name": "react-logistics",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "Simple and Minimal state management library for React. Easy to debug. Built upon React Context API.",
   "main": "dist/index.js",
   "typings": "index.d.ts",
